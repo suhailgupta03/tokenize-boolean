@@ -11,7 +11,7 @@ console.log(tstr,'===',finalString);
 
 // Sample output 2
 const finalString2 = new TokenizeBoolean().parse(tstr2);
-console.log(tstr,'===',finalString);
+console.log(tstr,'===',finalString2);
 
 
 
