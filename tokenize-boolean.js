@@ -16,9 +16,15 @@ module.exports = class TokenizeBoolean {
         if (text) {
             let tokens = new Tokenizer().tokenize(text);
             let tokenBoolStr = ""
+
             for (let t of tokens) {
                 if (tokenBoolStr) {
-                    tokenBoolStr += ` ${t.token}`;
+                    if (tokenBoolStr == '#') // Apply the # rule
+                        tokenBoolStr += `${t.token}`;
+                    else if (tokenBoolStr == '@') // Apply the @ rule
+                        tokenBoolStr += `${t.token}`;
+                    else
+                        tokenBoolStr += ` ${t.token}`;
                 } else {
                     tokenBoolStr = `${t.token}`;
                 }
@@ -41,6 +47,14 @@ module.exports = class TokenizeBoolean {
     parse(stringToParse) {
         try {
             if (stringToParse) {
+                // Make an explicit wrap
+                stringToParse = `(${stringToParse})`;
+                // Add space between a token and bracket
+                stringToParse = stringToParse
+                    .split('(')
+                    .join('( ')
+                    .split(')')
+                    .join(' )');
                 // Init the left and right pointer
                 let leftPointer = 0;
                 let rightPointer = 0;
@@ -48,14 +62,19 @@ module.exports = class TokenizeBoolean {
                 let connectingBoolean = "OR";
                 let quoteEncounter = 0;
                 for (let i = 0; i < stringToParse.length; i++) {
-                    if (stringToParse[i] == '"')
+                    if (stringToParse[i].match(/^\(|\)/)) {
+                        rightPointer++;
+                        leftPointer++;
+                        finalString += `${stringToParse[i]}`;
+                    } else if (stringToParse[i] == '"')
                         quoteEncounter++;
+
                     /**
                      * Move the pointers when:
                      *  - Space is encountered
                      *  - Last character in the string is encountered
                      */
-                    if (((quoteEncounter == 0) && (stringToParse[i].trim().length == 0) || (i == stringToParse.length - 1)) || (quoteEncounter == 2)) {
+                    if (((quoteEncounter == 0) && (stringToParse[i].trim().length == 0)) || (quoteEncounter == 2)) {
                         // Reset the quote encounter if required
                         quoteEncounter = 0;
                         // Encountered a whitespace character
@@ -86,10 +105,7 @@ module.exports = class TokenizeBoolean {
                                     /**
                                      * Update the final string
                                      */
-                                    if (!finalString)
-                                        finalString += ` ${booleanStub}`;
-                                    else
-                                        finalString += ` ${connectingBoolean} ${booleanStub}`;
+                                    finalString += ` ${booleanStub}`;
                                 } else {
                                     /**
                                      * String to tokenize was already in the tokenized 
@@ -98,12 +114,11 @@ module.exports = class TokenizeBoolean {
                                     const triSTC = stringToTokenizeCopy
                                         .replace(/^'|"/, "")
                                         .replace(/'|"$/, "")
+                                        .replace("(", "")
+                                        .replace(")", "")
                                         .trim();
 
-                                    if(finalString)
-                                        finalString += ` ${connectingBoolean} "${triSTC}"`;
-                                    else
-                                        finalString += `"${triSTC}"`;
+                                    finalString += `"${triSTC}"`;
                                 }
                             }
                             /**
@@ -118,9 +133,24 @@ module.exports = class TokenizeBoolean {
                             leftPointer = rightPointer;
                             // Update the connecting boolean
                             connectingBoolean = stringToTokenize.trim();
+                            // Append the connecting boolean
+                            finalString += ` ${connectingBoolean} `;
                         }
                     }
                 }
+
+               if(finalString == '()')
+                    finalString = stringToParse;
+
+                // Remove the extra wrap
+                finalString = finalString
+                    .replace(/^\(/, '')
+                    .replace(/\)$/, '')
+                    .split('( ')
+                    .join('(')
+                    .split(' )')
+                    .join(')');
+
                 return finalString;
             } else {
                 throw new Error("Empty string passed");
