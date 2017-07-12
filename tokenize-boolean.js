@@ -6,6 +6,16 @@ module.exports = class TokenizeBoolean {
         return ['OR', 'AND', 'NOT'];
     }
 
+    static get SPECIAL_TOKENS() {
+        return /[!@#$%^&*_\-\[\]:;{},.?\/+=~]/g;
+    }
+
+    static get ALLOWED_BOOLEAN_CHARS() {
+        return /^[-+~,]{1}/g;
+    }
+
+
+
     /**
      * Tokenizes the string by using ICU boundary analysis
      * @see https://www.npmjs.com/package/node-icu-tokenizer
@@ -14,19 +24,21 @@ module.exports = class TokenizeBoolean {
      */
     tokenize(text) {
         if (text) {
-            let tokens = new Tokenizer().tokenize(text);
-            let tokenBoolStr = ""
+            let tokenBoolStr = "";
+            let tokens = [];
+            if (text.match(TokenizeBoolean.SPECIAL_TOKENS)) {
+                tokenBoolStr = text;
+                tokens = [text];
+            } else {
+                tokens = new Tokenizer().tokenize(text);
 
-            for (let t of tokens) {
-                if (tokenBoolStr) {
-                    if (tokenBoolStr == '#') // Apply the # rule
-                        tokenBoolStr += `${t.token}`;
-                    else if (tokenBoolStr == '@') // Apply the @ rule
-                        tokenBoolStr += `${t.token}`;
-                    else
+                for (let t of tokens) {
+                    if (tokenBoolStr) {
                         tokenBoolStr += ` ${t.token}`;
-                } else {
-                    tokenBoolStr = `${t.token}`;
+
+                    } else {
+                        tokenBoolStr = `${t.token}`;
+                    }
                 }
             }
 
@@ -52,9 +64,12 @@ module.exports = class TokenizeBoolean {
                 // Add space between a token and bracket
                 stringToParse = stringToParse
                     .split('(')
-                    .join('( ')
+                    .join(' ( ')
                     .split(')')
-                    .join(' )');
+                    .join(' )')
+                    .split(',')
+                    .join(' , ');
+                    
                 // Init the left and right pointer
                 let leftPointer = 0;
                 let rightPointer = 0;
@@ -89,10 +104,11 @@ module.exports = class TokenizeBoolean {
                             let stringToTokenizeCopy = stringToTokenize;
                             // Remove any double quotes before tokenization of the string
                             stringToTokenize = stringToTokenize
+                                .trim()
                                 .replace(/"/g, "")
                                 .replace("(", "")
-                                .replace(")", "")
-                                .trim();
+                                .replace(")", "");
+
                             // Tokenize the string
                             let pieces = this.tokenize(stringToTokenize);
                             if (pieces && Array.isArray(pieces.tokens) && pieces.tokens.length > 0) {
@@ -112,13 +128,16 @@ module.exports = class TokenizeBoolean {
                                      * form
                                      */
                                     const triSTC = stringToTokenizeCopy
-                                        .replace(/^'|"/, "")
-                                        .replace(/'|"$/, "")
+                                        .trim()
+                                        .replace(/^('|")/, "")
+                                        .replace(/('|")$/, "")
                                         .replace("(", "")
-                                        .replace(")", "")
-                                        .trim();
+                                        .replace(")", "");
 
-                                    finalString += `"${triSTC}"`;
+                                    if (triSTC.match(TokenizeBoolean.ALLOWED_BOOLEAN_CHARS))
+                                        finalString += ` ${triSTC}`;
+                                    else
+                                        finalString += ` "${triSTC}"`;
                                 }
                             }
                             /**
@@ -139,7 +158,7 @@ module.exports = class TokenizeBoolean {
                     }
                 }
 
-               if(finalString == '()')
+                if (finalString == '()')
                     finalString = stringToParse;
 
                 // Remove the extra wrap
