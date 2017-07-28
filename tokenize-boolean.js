@@ -1,4 +1,5 @@
 const Tokenizer = require("node-icu-tokenizer");
+const Moji = require('./emoticon-detector');
 
 module.exports = class TokenizeBoolean {
 
@@ -26,7 +27,7 @@ module.exports = class TokenizeBoolean {
         if (text) {
             let tokenBoolStr = "";
             let tokens = [];
-            if (text.match(TokenizeBoolean.SPECIAL_TOKENS)) {
+            if (text.match(TokenizeBoolean.SPECIAL_TOKENS) || Moji.hasEmoji(text) || Moji.hasEmoticon(text)) {
                 tokenBoolStr = text;
                 tokens = [text];
             } else {
@@ -59,6 +60,16 @@ module.exports = class TokenizeBoolean {
     parse(stringToParse) {
         try {
             if (stringToParse) {
+                // Happy empoticon
+                stringToParse = stringToParse.replace(/(8|:|;|\*){1}[-c^;\*]?\)/g, ($o) => {
+                    return $o.replace(/\)/g, "__CCB__");
+                });
+
+                // Sad emoticon
+                 stringToParse = stringToParse.replace(/[:>]{1}[-:']?\(/g, ($o) => {
+                    return $o.replace(/\)/g, "__OCB__");
+                });
+
                 // Make an explicit wrap
                 stringToParse = `(${stringToParse})`;
                 // Add space between a token and bracket
@@ -69,7 +80,7 @@ module.exports = class TokenizeBoolean {
                     .join(' )')
                     .split(',')
                     .join(' , ');
-                    
+
                 // Init the left and right pointer
                 let leftPointer = 0;
                 let rightPointer = 0;
@@ -168,7 +179,9 @@ module.exports = class TokenizeBoolean {
                     .split('( ')
                     .join('(')
                     .split(' )')
-                    .join(')');
+                    .join(')')
+                    .replace(/__OCB__/g,'(')
+                    .replace(/__CCB__/g,')');
 
                 return finalString;
             } else {
