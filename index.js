@@ -59,9 +59,12 @@ const TokenizeBoolean = require('./tokenize-boolean');
 //details = '("thuốc" AND ("nặng-nhẹ" OR "đầm" OR "đằm" OR "thơm" OR "đắng" OR "khét" OR "ngọt ở đầu top" OR "ngọt nhẹ nơi đầu môi" OR "chắc lỏng")';
 //details = '(DBS OR "#DBSBank" OR "#DBSBank" OR "#DBSBank_TW" OR "#DBSBank_Taiwan" OR "#DBSTW" OR "#DBSTaiwan" OR "#DBS_TW" OR "#DBS_Taiwan" OR "@DBSBank_TW" OR "@DBSBank_Taiwan" OR "@DBSTW" OR "@DBSTaiwan" OR "@DBS_TW" OR "@DBS_Taiwan" OR "DBSTW" OR "DBSTaiwan" OR "DBS_TW" OR "DBS_Taiwan" OR 星展 OR 星展銀行) NOT ("#dragonball" OR "#dbz" OR "#dbzfunny" OR "#shockdbs" OR "#dbz" OR "#dragonball" OR "dragonball" OR "#dbz" OR "dbz" OR "@crazydbs" OR "@dbzcore" OR "@dbz" OR "@dbz_vidz" OR "#goku" OR "#dragonballz" OR "dragonballz" OR "@legendarywarriorgoku" OR "#piccolo" OR "@insanedbz" OR "#gokublack" OR "#vegeta")';
 //details = 'I am very happy😊 today 👫';
-details = 'My name is zeeze :) and I am very happy :D:)';
+//details = 'My name is zeeze :) and I am very happy :D:)';
+//details = 'ਸੁਹੈਲ handlers:BreezeThailand';
+//details ='a:"v"';
+details = "CDL’s";
 // Sample output 1
 const finalString = new TokenizeBoolean().parse(details);
 console.log(details);
-console.log( '=======================:::' )
+console.log( '=======================:::')
 console.log(finalString);
