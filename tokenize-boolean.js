@@ -15,6 +15,9 @@ module.exports = class TokenizeBoolean {
         return /^[-+~,]{1}/g;
     }
 
+    static get HANDLE_BAR() {
+        return /[\w]+[:]{1}[\w'\'\"]+/;
+    }
 
 
     /**
@@ -66,7 +69,7 @@ module.exports = class TokenizeBoolean {
                 });
 
                 // Sad emoticon
-                 stringToParse = stringToParse.replace(/[:>]{1}[-:']?\(/g, ($o) => {
+                stringToParse = stringToParse.replace(/[:>]{1}[-:']?\(/g, ($o) => {
                     return $o.replace(/\)/g, "__OCB__");
                 });
 
@@ -138,15 +141,18 @@ module.exports = class TokenizeBoolean {
                                      * String to tokenize was already in the tokenized 
                                      * form
                                      */
-                                    const triSTC = stringToTokenizeCopy
-                                        .trim()
-                                        .replace(/^('|")/, "")
-                                        .replace(/('|")$/, "")
-                                        .replace("(", "")
-                                        .replace(")", "");
+                                    let triSTC = stringToTokenizeCopy.trim();
 
-                                    if (triSTC.match(TokenizeBoolean.ALLOWED_BOOLEAN_CHARS))
-                                        finalString += ` ${triSTC}`;
+                                    if (!triSTC.match(TokenizeBoolean.HANDLE_BAR)) {
+                                        triSTC = triSTC
+                                            .replace(/^('|")/, "")
+                                            .replace(/('|")$/, "")
+                                            .replace("(", "")
+                                            .replace(")", "");
+                                    }
+                                    if (triSTC.match(TokenizeBoolean.ALLOWED_BOOLEAN_CHARS) ||
+                                        triSTC.match(TokenizeBoolean.HANDLE_BAR))
+                                        finalString += `${triSTC}`;
                                     else
                                         finalString += ` "${triSTC}"`;
                                 }
@@ -180,8 +186,8 @@ module.exports = class TokenizeBoolean {
                     .join('(')
                     .split(' )')
                     .join(')')
-                    .replace(/__OCB__/g,'(')
-                    .replace(/__CCB__/g,')');
+                    .replace(/__OCB__/g, '(')
+                    .replace(/__CCB__/g, ')');
 
                 return finalString;
             } else {
