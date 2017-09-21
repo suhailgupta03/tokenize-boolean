@@ -67,8 +67,9 @@ const TokenizeBoolean = require('./tokenize-boolean');
 //details = "城市发展有限公司";
 //details = 'publications:sttimes'
 //details= '"Employees\' Union"~5' 
-//details = 'Patents (Amendment) Bill'
-details = '#星展';
+details = '"Patents (Amendment) Bill"';
+//details = '#星展';
+//details = '(publications:"Stomp")'
 // Sample output 1
 const finalString = new TokenizeBoolean().parse(details);
 console.log(details);

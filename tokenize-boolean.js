@@ -105,7 +105,9 @@ module.exports = class TokenizeBoolean {
                      *  - Space is encountered
                      *  - Last character in the string is encountered
                      */
-                    if (((quoteEncounter == 0) && (stringToParse[i].trim().length == 0)) || (quoteEncounter == 2)) {
+                    if (((quoteEncounter == 0) && (stringToParse[i].trim().length == 0))
+                        || (quoteEncounter == 2)
+                        || ((quoteEncounter == 1) && (stringToParse[i].trim().length == 0))) {
                         // Reset the quote encounter if required
                         quoteEncounter = 0;
                         // Encountered a whitespace character
