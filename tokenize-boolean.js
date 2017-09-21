@@ -30,12 +30,14 @@ module.exports = class TokenizeBoolean {
         if (text) {
             let tokenBoolStr = "";
             let tokens = [];
-            if (text.match(TokenizeBoolean.SPECIAL_TOKENS) || Moji.hasEmoji(text) || Moji.hasEmoticon(text)) {
+            if (text.match(TokenizeBoolean.SPECIAL_TOKENS)
+                || Moji.hasEmoji(text)
+                || Moji.hasEmoticon(text)
+                || text.match(/[$\']/)) {
                 tokenBoolStr = text;
                 tokens = [text];
             } else {
                 tokens = new Tokenizer().tokenize(text);
-
                 for (let t of tokens) {
                     if (tokenBoolStr) {
                         tokenBoolStr += ` ${t.token}`;

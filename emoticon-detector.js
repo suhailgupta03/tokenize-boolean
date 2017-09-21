@@ -1,10 +1,15 @@
+'use strict';
+
 module.exports = class Moji {
 
-    
+    constructor() {
+        this.TEXT_EMO_PATTERN = Moji.EMOTICON_PATTERN;
+    }
+
     static EMOTICONS() {
         return {
             happy: [
-                ':‑)',
+                ':-)',
                 ':-]',
                 ':-3',
                 ':->',
@@ -512,8 +517,11 @@ module.exports = class Moji {
      */
     static get EMOTICON_PATTERN() {
         let emoticonList = [];
-        for(let [category, emList] of Object.entries(Moji.EMOTICONS)) {
-            emoticonList = [...emList, ...emoticonList];
+        for(let [category, emList] of Object.entries(Moji.EMOTICONS())) {
+            for(let em of emList) {
+                em = em.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                emoticonList.push(em);
+            }
         }
         return new RegExp(emoticonList.join('|'), 'g');
     }
@@ -527,18 +535,18 @@ module.exports = class Moji {
          * @link https://en.wikipedia.org/wiki/Transport_and_Map_Symbols
          * @link https://en.wikipedia.org/wiki/Miscellaneous_Symbols
          * @link https://en.wikipedia.org/wiki/Dingbat#Dingbats_Unicode_block
-         * 
+         *
          * Unicode 10.0 represents emoji using 1,182 characters spread across 22 blocks,
-         * of which 1,085 are single emoji characters, 26 are Regional Indicator Symbols 
-         * that combine in pairs to form flag emoji, and 12 (#, * and 0-9) are base 
+         * of which 1,085 are single emoji characters, 26 are Regional Indicator Symbols
+         * that combine in pairs to form flag emoji, and 12 (#, * and 0-9) are base
          * characters for keycap emoji sequences.
-         * 
+         *
          * 637 of the 768 code points in the Miscellaneous Symbols and Pictographs
-         * block are considered emoji. 134 of the 148 code points in the Supplemental 
+         * block are considered emoji. 134 of the 148 code points in the Supplemental
          * Symbols and Pictographs block are considered emoji. All of the 80 code points
-         * in the Emoticons block are considered emoji. 94 of the 107 code points in the 
-         * Transport and Map Symbols block are considered emoji. 80 of the 256 code points 
-         * in the Miscellaneous Symbols block are considered emoji. 33 of the 192 code 
+         * in the Emoticons block are considered emoji. 94 of the 107 code points in the
+         * Transport and Map Symbols block are considered emoji. 80 of the 256 code points
+         * in the Miscellaneous Symbols block are considered emoji. 33 of the 192 code
          * points in the Dingbats block are considered emoji.
          */
 
@@ -546,7 +554,7 @@ module.exports = class Moji {
     }
     /**
      * Checks if the passed text item contains emoji
-     * @param {String} emoticon 
+     * @param {String} emoticon
      */
     static hasEmoji(textItem) {
         if (textItem && textItem.match(Moji.EMOJI_PATTERN)) {
@@ -558,7 +566,7 @@ module.exports = class Moji {
 
     /**
      * Checks if the passed text item contains emoticon
-     * @param {String} emoticonText 
+     * @param {String} emoticonText
      */
     static hasEmoticon(emoticonText) {
         if (emoticonText && emoticonText.match(Moji.EMOTICON_PATTERN))
@@ -575,18 +583,18 @@ module.exports = class Moji {
      * @param {Boolean} emoji - Replace all occuring emoji
      * @param {Boolean} emoticon - Replace all occuring emoticons
      */
-    static replaceMoji(text, emoji = true, emoticon = true) {
+    replaceMoji(text, emoji = true, emoticon = true) {
         if (text) {
             if (emoji && emoticon) {
                 text = text
                     .replace(Moji.EMOJI_PATTERN, "")
-                    .replace(Moji.EMOTICON_PATTERN, "");
+                    .replace(this.TEXT_EMO_PATTERN, "");
             } else if (emoji && !emoticon) {
                 text = text
                     .replace(Moji.EMOJI_PATTERN, "");
             } else if (!emoji && emoticon) {
                 text = text
-                    .replace(Moji.EMOTICON_PATTERN, "");
+                    .replace(this.TEXT_EMO_PATTERN, "");
             }
 
             return text;
