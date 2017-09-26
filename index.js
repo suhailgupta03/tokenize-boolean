@@ -67,10 +67,17 @@ const TokenizeBoolean = require('./tokenize-boolean');
 //details = "城市发展有限公司";
 //details = 'publications:sttimes'
 //details= '"Employees\' Union"~5' 
-details = '"Patents (Amendment) Bill"';
 //details = '#星展';
-//details = '(publications:"Stomp")'
-// Sample output 1
+//details = '"โตโยต้า โต โย ต้า"~3'
+//details= '星理財！' ;
+//details = '"プロパティ  プロパティ"~5 ';
+details = '"suhail gupta"~22 "abc"~22'
+//details = '＠星展'
+details = 'จู๊คจู๊คจู๊ค จู๊ค+ จู๊คจู๊คจู๊คจู๊ค';
+details = '"(Apples) Oranges (Peach) Pineapples"'
+details = '"Patents (Amendment) Bill"';
+details = '"จู๊คจู๊#คจู๊ค"';
+// Sample output 1 
 const finalString = new TokenizeBoolean().parse(details);
 console.log(details);
 console.log( '=======================:::')

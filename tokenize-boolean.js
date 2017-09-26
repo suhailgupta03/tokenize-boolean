@@ -11,6 +11,13 @@ module.exports = class TokenizeBoolean {
         return /[!@#$%^&*_\-\[\]:;{},.?\/+=~]/g;
     }
 
+    /**
+     * @see https://en.wikipedia.org/wiki/Halfwidth_and_fullwidth_forms
+     */
+    static get HALF_WIDTH_FULL_WIDTH() {
+        return /[\u{ff01}\u{ff03}-\u{ff06}\u{ff0b}\u{ff0d}\u{ff0e}\u{ff1d}\u{ff1f}\u{ff1a}\u{ff1b}\u{ff20}\u{ff3b}\u{ff3d}\u{ff3e}\u{ff5b}\u{ff5d}\u{ff5e}]/ug;
+    }
+
     static get ALLOWED_BOOLEAN_CHARS() {
         return /^[-+~,]{1}/g;
     }
@@ -18,7 +25,6 @@ module.exports = class TokenizeBoolean {
     static get HANDLE_BAR() {
         return /[\w]+[:]{1}[\w'\'\"]+/;
     }
-
 
     /**
      * Tokenizes the string by using ICU boundary analysis
@@ -33,7 +39,8 @@ module.exports = class TokenizeBoolean {
             if (text.match(TokenizeBoolean.SPECIAL_TOKENS)
                 || Moji.hasEmoji(text)
                 || Moji.hasEmoticon(text)
-                || text.match(/[$\']/)) {
+                || text.match(/[$\']/)
+                || text.match(TokenizeBoolean.HALF_WIDTH_FULL_WIDTH)) {
                 tokenBoolStr = text;
                 tokens = [text];
             } else {
@@ -64,6 +71,13 @@ module.exports = class TokenizeBoolean {
      */
     parse(stringToParse) {
         try {
+            {
+                // Sample string check: "Apples (Pineapples) Banana Mangoes (Papaya)"
+                let doubleQuoteRbStr = stringToParse.match(/^\"/) && stringToParse.match(/\"$/) && stringToParse.match(/\([\w]+\)/g);
+                if (doubleQuoteRbStr)
+                    return stringToParse;
+            }
+
             if (stringToParse) {
                 // Happy empoticon
                 stringToParse = stringToParse.replace(/(8|:|;|\*){1}[-c^;\*]?\)/g, ($o) => {
@@ -92,6 +106,7 @@ module.exports = class TokenizeBoolean {
                 let finalString = "";
                 let connectingBoolean = "OR";
                 let quoteEncounter = 0;
+                let lastTokenized = "";
                 for (let i = 0; i < stringToParse.length; i++) {
                     if (stringToParse[i].match(/^\(|\)/)) {
                         rightPointer++;
@@ -106,8 +121,7 @@ module.exports = class TokenizeBoolean {
                      *  - Last character in the string is encountered
                      */
                     if (((quoteEncounter == 0) && (stringToParse[i].trim().length == 0))
-                        || (quoteEncounter == 2)
-                        || ((quoteEncounter == 1) && (stringToParse[i].trim().length == 0))) {
+                        || (quoteEncounter == 2)) {
                         // Reset the quote encounter if required
                         quoteEncounter = 0;
                         // Encountered a whitespace character
@@ -126,7 +140,6 @@ module.exports = class TokenizeBoolean {
                                 .replace(/"/g, "")
                                 .replace("(", "")
                                 .replace(")", "");
-
                             // Tokenize the string
                             let pieces = this.tokenize(stringToTokenize);
                             if (pieces && Array.isArray(pieces.tokens) && pieces.tokens.length > 0) {
@@ -136,6 +149,7 @@ module.exports = class TokenizeBoolean {
                                      * Need to append to the boolean condition
                                      */
                                     let booleanStub = `("${stringToTokenize}" OR "${pieces.tokenBoolStr}")`;
+                                    lastTokenized = booleanStub;
                                     /**
                                      * Update the final string
                                      */
@@ -146,7 +160,6 @@ module.exports = class TokenizeBoolean {
                                      * form
                                      */
                                     let triSTC = stringToTokenizeCopy.trim();
-
                                     if (!triSTC.match(TokenizeBoolean.HANDLE_BAR)) {
                                         triSTC = triSTC
                                             .replace(/^('|")/, "")
@@ -154,11 +167,30 @@ module.exports = class TokenizeBoolean {
                                             .replace("(", "")
                                             .replace(")", "");
                                     }
-                                    if (triSTC.match(TokenizeBoolean.ALLOWED_BOOLEAN_CHARS) ||
-                                        triSTC.match(TokenizeBoolean.HANDLE_BAR))
+                                    if (triSTC.match(TokenizeBoolean.ALLOWED_BOOLEAN_CHARS)) {
+                                        if (triSTC.match(/^\~/)) {
+                                            let tok = lastTokenized
+                                                .replace('(', '')
+                                                .replace(')', '')
+                                                .split('OR');
+                                            tok.map(t => {
+                                                t = t.trim();
+                                                if (finalString.indexOf(`"${t}"`) == -1)
+                                                    finalString = finalString.replace(`${t}`, `${t}${triSTC}`);
+                                                else
+                                                    finalString = finalString.replace(`"${t}"`, `"${t}"${triSTC}`);
+                                            });
+                                        } else {
+                                            finalString += `${triSTC}`;
+                                        }
+
+                                    } else if (triSTC.match(TokenizeBoolean.HANDLE_BAR)) {
                                         finalString += `${triSTC}`;
-                                    else
+                                    }
+                                    else {
                                         finalString += ` "${triSTC}"`;
+                                    }
+                                    lastTokenized = triSTC;
                                 }
                             }
                             /**
@@ -181,7 +213,6 @@ module.exports = class TokenizeBoolean {
 
                 if (finalString == '()')
                     finalString = stringToParse;
-
                 // Remove the extra wrap
                 finalString = finalString
                     .replace(/^\(/, '')
