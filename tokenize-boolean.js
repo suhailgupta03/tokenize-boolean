@@ -8,7 +8,7 @@ module.exports = class TokenizeBoolean {
     }
 
     static get SPECIAL_TOKENS() {
-        return /[!@#$%^&*_\-\[\]:;{},.?\/+=~]/g;
+        return /[!$%^&*_\-\[\]:;{},.?\/+=~]/g;
     }
 
     /**
