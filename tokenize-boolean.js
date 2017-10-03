@@ -15,7 +15,7 @@ module.exports = class TokenizeBoolean {
      * @see https://en.wikipedia.org/wiki/Halfwidth_and_fullwidth_forms
      */
     static get HALF_WIDTH_FULL_WIDTH() {
-        return /[\u{ff01}\u{ff03}-\u{ff06}\u{ff0b}\u{ff0d}\u{ff0e}\u{ff1d}\u{ff1f}\u{ff1a}\u{ff1b}\u{ff20}\u{ff3b}\u{ff3d}\u{ff3e}\u{ff5b}\u{ff5d}\u{ff5e}]/ug;
+        return /[\u{ff01}\u{ff04}-\u{ff06}\u{ff0b}\u{ff0d}\u{ff0e}\u{ff1d}\u{ff1f}\u{ff1a}\u{ff1b}\u{ff3b}\u{ff3d}\u{ff3e}\u{ff5b}\u{ff5d}\u{ff5e}]/ug;
     }
 
     static get ALLOWED_BOOLEAN_CHARS() {
