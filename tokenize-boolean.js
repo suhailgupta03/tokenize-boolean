@@ -161,11 +161,13 @@ module.exports = class TokenizeBoolean {
                                      */
                                     let triSTC = stringToTokenizeCopy.trim();
                                     if (!triSTC.match(TokenizeBoolean.HANDLE_BAR)) {
-                                        triSTC = triSTC
-                                            .replace(/^('|")/, "")
-                                            .replace(/('|")$/, "")
-                                            .replace("(", "")
-                                            .replace(")", "");
+                                        if (!triSTC.match(TokenizeBoolean.ALLOWED_BOOLEAN_CHARS)) {
+                                            triSTC = triSTC
+                                                .replace(/^('|")/, "")
+                                                .replace(/('|")$/, "")
+                                                .replace("(", "")
+                                                .replace(")", "");
+                                        }
                                     }
                                     if (triSTC.match(TokenizeBoolean.ALLOWED_BOOLEAN_CHARS)) {
                                         if (triSTC.match(/^\~/)) {
