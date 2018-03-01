@@ -81,8 +81,9 @@ details = 'DBS OR Sparks'
 details = "-\"A\"";
 details = "#รถนิสสันป้ายแดง‼️"
 
-details = `(("a"~3) AND ("a"~3))`;
+details = `(("a"+3) AND ("a"+3))`;
 
+details = `Tigerslife OR (("cash vending machine"~3) AND ("Raffles Place" OR "Chevrons House" OR "Orchard Road" OR "orchard" OR "Somerset")) OR  (("cash vending machine"~3) AND ("Raffles Place" OR "Chevrons House" OR "Orchard Road" OR "orchard" OR "Somerset"))`;
 //details = `("cash vending machine") OR  ("cash vending machine"~3)`;
 // Sample output 1 
 const finalString = new TokenizeBoolean().parse(details);
