@@ -180,7 +180,7 @@ module.exports = class TokenizeBoolean {
                                                 if (finalString.indexOf(`"${t}"`) == -1)
                                                     finalString = finalString.replace(`${t}`, `${t}${triSTC}`);
                                                 else
-                                                    finalString = finalString.replace(`"${t}"`, `"${t}"${triSTC}`);
+                                                    finalString = finalString.replace(new RegExp(`"${t}"$`), `"${t}"${triSTC}`);
                                             });
                                         } else {
                                             finalString += `${triSTC}`;

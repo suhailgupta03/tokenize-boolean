@@ -77,6 +77,13 @@ details = 'จู๊คจู๊คจู๊ค จู๊ค+ จู๊คจู
 details = '"(Apples) Oranges (Peach) Pineapples"'
 details = '"Patents (Amendment) Bill"';
 details = '"จู๊คจู๊#คจู๊ค"';
+details = 'DBS OR Sparks'
+details = "-\"A\"";
+details = "#รถนิสสันป้ายแดง‼️"
+
+details = `(("a"~3) AND ("a"~3))`;
+
+//details = `("cash vending machine") OR  ("cash vending machine"~3)`;
 // Sample output 1 
 const finalString = new TokenizeBoolean().parse(details);
 console.log(details);
