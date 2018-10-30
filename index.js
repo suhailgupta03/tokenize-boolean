@@ -84,7 +84,34 @@ details = "#รถนิสสันป้ายแดง‼️"
 details = `(("a"+3) AND ("a"+3))`;
 
 details = `Tigerslife OR (("cash vending machine"~3) AND ("Raffles Place" OR "Chevrons House" OR "Orchard Road" OR "orchard" OR "Somerset")) OR  (("cash vending machine"~3) AND ("Raffles Place" OR "Chevrons House" OR "Orchard Road" OR "orchard" OR "Somerset"))`;
-//details = `("cash vending machine") OR  ("cash vending machine"~3)`;
+
+details = `"V Hotel Lavender" OR "#VHotelLavender"`;
+details = `"Nightlife" OR "#Nightlife" OR "#nightlifesingapore" OR "#nightlifesg" OR "singapore_nightlife" OR "singaporenightlife" OR "@singaporenightlife" OR "sgnightlife" OR "@sgnightlife"`;
+
+details = `"Chan Brothers" OR("#ChanBrothers" AND ("#travel" OR "travel" OR "trip" OR "#trip"))OR "chanbrothers.com" OR "@chanbrotherstravel" OR "#chanbrotherstravel" OR "@ChanBrothersSG" OR "#ChanBrothersSG" OR "#ChanBros" OR "ChanBrothersTravelSG" OR "@ChanBrothersTravelSG" OR "#ChanBrothersTravelSG"`;
+
+details = `"Apple Vacations Singapore" OR("#AppleVacations" AND "#singapore")OR "applevacations.com.sg" OR "@applevacationssg" OR "#applevacationssg" OR "applevacationssg"`;
+
+details = `"STA Travel" OR (("#STATravel") AND ("Singapore" OR "#singapore" OR "S'pore" OR "SG" OR "#sg")) OR "statravel.com" OR "@STATravel" OR "#STATravel" OR "@STATravelSG" OR "#STATravelSG" OR "STATravelSG"`;
+
+details = `(Subway OR #Subway OR SubwaySG) AND (drink OR #drink OR offer OR offers OR breakfast OR eat OR #eat OR bread OR taste OR #bread OR burger OR tomato OR cheese OR stuffing OR food OR popeyes OR eating OR cafe OR order OR ordering OR hungry OR Sandwiches OR stores OR cookies OR Sandwiches OR halal OR chicken)`;
+
+details = `Chicken Rice OR #ChickenRice OR #chickenriceshop OR #chickenricebowl OR #chickenricebowl OR #chickenricesingapore OR #chickenricenoodle  OR #HainaneseChickenRice OR #hainanesechickenriceball`;
+
+details = `Lavender Singapore OR #lavendersingapore OR #lavendersg`;
+
+details = `Pandan Reservoir OR #Pandanreservoir OR #Pandansingapore OR #Pandansg`;
+
+details = `"Apple Vacations Singapore" OR ("#AppleVacations" AND "#singapore") OR "applevacations.com.sg" OR "@applevacationssg" OR "#applevacationssg" OR "applevacationssg"`;
+
+details = `パソコン、iPhone/iPad、Android、Chromecast、Amazon Fire TV/Fire TV Stick、Apple TV、テレビ、PS4/PS Vita 配信開始日：`;
+
+details = `"Lavender Singapore" OR #lavendersingapore OR #lavendersg`;
+
+details = `#วงในพาแดก`;
+
+details = `(("वायु प्रदूषण" OR "वायु गुणवत्ता" OR "वायु गुणवत्ता सूचकांक" OR "धुंध" OR "वाहनों प्रदूषण" OR "PM10" OR "पीएम 2.5" OR "वायु गुणवत्ता मॉनीट" OR "वायु गुणवत्ता चेतावनी" OR "वायू मानक सूचकांक" OR "स् वभाव धुंध प्रदूषण" OR "स्लैश और बर्न") AND (("प्रयोग" OR "उपयोग" OR "का उपयोग कर" OR "एक आदत" OR "गोद लेने" OR "प्रयोज्य) AND (साइकिल" OR "साइकिल" OR "सार्वजनिक परिवहन" OR "बड़े पैमाने पर परिवहन" OR "शेयर वाहनों") OR "कार पूल" OR "कार पूलिंग" OR "दोस्ताना पटरियों" OR "उचित सड़क पटरियों" OR "ईंधन कुशल वाहनों" OR "बिजली की कारों" OR "कम ईंधन की खपत" OR "कम ईंधन उत्सर्जन" OR "साझा वाहनों"))`;
+
 // Sample output 1 
 const finalString = new TokenizeBoolean().parse(details);
 console.log(details);

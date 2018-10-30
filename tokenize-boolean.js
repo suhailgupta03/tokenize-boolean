@@ -1,6 +1,10 @@
 const Tokenizer = require("node-icu-tokenizer");
 const Moji = require('./emoticon-detector');
 
+String.prototype.replaceAt = function (index, replacement) {
+    return this.substr(0, index) + replacement + this.substr(index + replacement.length);
+}
+
 module.exports = class TokenizeBoolean {
 
     static get ALLOWED_BOOLEANS() {
@@ -45,6 +49,16 @@ module.exports = class TokenizeBoolean {
                 tokens = [text];
             } else {
                 tokens = new Tokenizer().tokenize(text);
+                /**
+                 * Make sure that "hash" never hangs alone
+                 * For example:
+                 * #วงในพาแดก get tokenized as 
+                 * ("#วงในพาแดก" OR "#วงใน พา แดก")
+                 */
+                if (tokens && tokens.length > 1 && tokens[0].token == '#') {
+                    tokens = tokens.slice(1, tokens.length);
+                    tokens[0].token = `#${tokens[0].token}`
+                }
                 for (let t of tokens) {
                     if (tokenBoolStr) {
                         tokenBoolStr += ` ${t.token}`;
@@ -108,6 +122,11 @@ module.exports = class TokenizeBoolean {
                 let quoteEncounter = 0;
                 let lastTokenized = "";
                 for (let i = 0; i < stringToParse.length; i++) {
+                    if (quoteEncounter == 1 && stringToParse[i].match(/^\(|\)/)) {
+                        if (stringToParse[i] == ')') stringToParse = stringToParse.replaceAt(i, "｣");
+                        else if (stringToParse[i] == '(') stringToParse = stringToParse.replaceAt(i, "｢");
+                    }
+
                     if (stringToParse[i].match(/^\(|\)/)) {
                         rightPointer++;
                         leftPointer++;
@@ -224,7 +243,9 @@ module.exports = class TokenizeBoolean {
                     .split(' )')
                     .join(')')
                     .replace(/__OCB__/g, '(')
-                    .replace(/__CCB__/g, ')');
+                    .replace(/__CCB__/g, ')')
+                    .replace(/｢/g, '(')
+                    .replace(/｣/g, ')');
 
                 return finalString;
             } else {
